@@ -30,7 +30,7 @@ def generate_response(uploaded_file, query_text):
         qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever, return_source_documents= True)
     
     try:
-        llm_response = qa_chain(query_text)
+        llm_response = qa_chain.run(query_text)
         user_question =query
         ground_truth = llm_response['source_documents']
         ground_truth_answers = ground_truth[0].page_content.split("question: ")[1].split("\n")[0]
@@ -57,7 +57,7 @@ def generate_response(uploaded_file, query_text):
                                       chain_type = "stuff",
                                       retriever = retriever,
                                       return_source_documents= True)
-        llm_response2 = qa_chain2(query)
+        llm_response2 = qa_chain2.run(query)
         return llm_response2['result']
     
 # Page title
