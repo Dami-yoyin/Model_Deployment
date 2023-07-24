@@ -44,7 +44,7 @@ def generate_response(uploaded_file, openai_api_key, query_text):
     similarity = cosine_similarity(answer_vectors[0], answer_vectors[1])[0][0]
 #     print(similarity)
     if similarity >= 0.5:
-        return f"Result: {answers}"
+        return answers
     else:
         persist_directory = 'gpt_3'
         embedding = OpenAIEmbeddings()
@@ -58,7 +58,7 @@ def generate_response(uploaded_file, openai_api_key, query_text):
                                       retriever = retriever,
                                       return_source_documents= True)
         llm_response2 = qa_chain2(query)
-        return f"Result: {llm_response2['result']}"
+        return llm_response2['result']
     
 # Page title
 st.set_page_config(page_title='🦜🔗BG- Ask the Doc App')
