@@ -9,9 +9,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
 
-open_api_key = "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"
+openai_api_key = "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"
 
-def generate_response(uploaded_file, openai_api_key, query_text):
+def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
     if uploaded_file is not None:
         #documents = [uploaded_file.read().decode()]
@@ -71,8 +71,8 @@ query_text = st.text_input('Enter your question:', placeholder = 'Please provide
 
 # Form input and query
 result = []
-with st.spinner('typing...'):
-    response = generate_response(uploaded_file, openai_api_key, query_text)
+with st.spinner('In Progress...'):
+    response = generate_response(uploaded_file, query_text)
     result.append(response)
     
 # with st.form('myform', clear_on_submit=True):
