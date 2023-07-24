@@ -5,7 +5,6 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.document_loaders.csv_loader import CSVLoader
-from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from langchain.chat_models import ChatOpenAI
 
