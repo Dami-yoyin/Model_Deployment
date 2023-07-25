@@ -8,15 +8,17 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
+import pandas as pd
 
 openai_api_key = "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"
 
 def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        document = [uploaded_file.read().decode()]
-        loader = CSVLoader(document)
-        documents = loader.load()
+        # document = [uploaded_file.read().decode()]
+        documents = pd.read_csv(uploaded_file)
+        # loader = CSVLoader(document)
+        # documents = loader.load()
         # Split documents into chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         texts=text_splitter.split_documents(documents)
