@@ -14,8 +14,8 @@ openai_api_key = "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"
 def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        #documents = [uploaded_file.read().decode()]
-        loader = CSVLoader(uploaded_file)
+        document = [uploaded_file.read().decode()]
+        loader = CSVLoader(document)
         documents = loader.load()
         # Split documents into chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
