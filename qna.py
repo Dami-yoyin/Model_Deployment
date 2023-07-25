@@ -1,23 +1,28 @@
 import streamlit as st
+from streamlit_chat import message
 from langchain.llms import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.document_loaders.csv_loader import CSVLoader
+from langchain.chains import ConversationalRetrievalChain
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
-import pandas as pd
+import tempfile
 
 openai_api_key = "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"
 
 def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
     if uploaded_file is not None:
-        # document = [uploaded_file.read().decode()]
-        document = pd.read_csv(uploaded_file)
-        loader = CSVLoader(document)
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(uploaded_file.getvalue())
+            tmp_file_path = tmp_file.name
+
+        loader = CSVLoader(file_path=tmp_file_path, encoding="utf-8", csv_args={
+                'delimiter': ','})
         documents = loader.load()
         # Split documents into chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -29,7 +34,7 @@ def generate_response(uploaded_file, query_text):
         # Create retriever interface
         retriever = db.as_retriever(search_kwargs={"k":2})
         # Create QA chain
-        qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever, return_source_documents= True)
+        qa_chain = ConversationalRetrievalQA.from_llm(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever, return_source_documents= True)
         return qa_chain.run(query_text)
         
 # def output():
@@ -71,7 +76,7 @@ st.set_page_config(page_title='🦜🔗BG- Ask the Doc App')
 st.title('🦜🔗 BG - Ask the Doc App')
 
 # File upload
-uploaded_file = st.file_uploader('Upload an article', type='csv')
+uploaded_file = st.sidebar.file_uploader('Upload document', type='csv')
 # Query text
 query_text = st.text_input('Enter your question:', placeholder = 'Please provide a short summary.', disabled=not uploaded_file)
 
