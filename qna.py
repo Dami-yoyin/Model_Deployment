@@ -7,6 +7,7 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.chains import ConversationalRetrievalChain
+from langchain.vectorstores import FAISS
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
@@ -30,7 +31,7 @@ def generate_response(uploaded_file, query_text):
         # Select embeddings
         embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
         # Create a vectorstore from documents
-        db = Chroma.from_documents(texts, embeddings)
+        db = FAISS.from_documents(texts, embeddings)
         # Create retriever interface
         retriever = db.as_retriever(search_kwargs={"k":2})
         # Create QA chain
