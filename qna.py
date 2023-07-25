@@ -28,14 +28,16 @@ def generate_response(uploaded_file, query_text):
         retriever = db.as_retriever(search_kwargs={"k":2})
         # Create QA chain
         qa_chain = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever, return_source_documents= True)
-    
+        return qa_chain.run(query_text)
+        
+def output():
     try:
-        llm_response = qa_chain(query_text)
-        user_question =query
+        llm_response = generate_response(uploaded_file, query_text)
+        user_question =query_text
         ground_truth = llm_response['source_documents']
         ground_truth_answers = ground_truth[0].page_content.split("question: ")[1].split("\n")[0]
         answers =ground_truth[0].page_content.split("additional_info: ")[1].split("\n")[0]
-#         print(answers)
+        
     except IndexError:
         ground_truth_answers = " "
     
@@ -57,8 +59,10 @@ def generate_response(uploaded_file, query_text):
                                       chain_type = "stuff",
                                       retriever = retriever,
                                       return_source_documents= True)
-        llm_response2 = qa_chain2(query)
-        return llm_response2['result']
+        return qa_chain2.run(query_text)['result']
+        # llm_response2 = qa_chain2(query)
+        # return llm_response2['result']
+
     
 # Page title
 st.set_page_config(page_title='🦜🔗BG- Ask the Doc App')
@@ -72,7 +76,7 @@ query_text = st.text_input('Enter your question:', placeholder = 'Please provide
 # Form input and query
 result = []
 with st.spinner('In Progress...'):
-    response = generate_response(uploaded_file, query_text)
+    response = output()
     result.append(response)
     
 # with st.form('myform', clear_on_submit=True):
