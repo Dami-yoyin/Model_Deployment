@@ -16,9 +16,9 @@ def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
     if uploaded_file is not None:
         # document = [uploaded_file.read().decode()]
-        documents = pd.read_csv(uploaded_file)
-        # loader = CSVLoader(document)
-        # documents = loader.load()
+        document = pd.read_csv(uploaded_file)
+        loader = CSVLoader(document)
+        documents = loader.load()
         # Split documents into chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         texts=text_splitter.split_documents(documents)
