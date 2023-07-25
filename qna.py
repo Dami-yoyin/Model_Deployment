@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
 import tempfile
 
-openai_api_key = "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"
+openai_api_key = "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"
 
 def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
