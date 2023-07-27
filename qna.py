@@ -31,45 +31,45 @@ def generate_response(uploaded_file, query_text):
         # Select embeddings
         embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
         # Create a vectorstore from documents
-        db = FAISS.from_documents(texts, embeddings)
+        database = FAISS.from_documents(texts, embeddings)
         # Create retriever interface
-        retriever = db.as_retriever(search_kwargs={"k":2})
+        retrievers = database.as_retriever(search_kwargs={"k":2})
         # Create QA chain
-        qa_chain = ConversationalRetrievalQA.from_llm(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever, return_source_documents= True)
+        qa_chain = ConversationalRetrievalQA.from_llm(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retrievers, return_source_documents= True)
         return qa_chain.run(query_text)
         
-def output():
-    try:
-        llm_response = generate_response(uploaded_file, query_text)
-        user_question = query_text
-        ground_truth = llm_response['source_documents']
-        ground_truth_answers = ground_truth[0].page_content.split("question: ")[1].split("\n")[0]
-        answers =ground_truth[0].page_content.split("additional_info: ")[1].split("\n")[0]
+# def output():
+#     try:
+#         llm_response = generate_response(uploaded_file, query_text)
+#         user_question = query_text
+#         ground_truth = llm_response['source_documents']
+#         ground_truth_answers = ground_truth[0].page_content.split("question: ")[1].split("\n")[0]
+#         answers =ground_truth[0].page_content.split("additional_info: ")[1].split("\n")[0]
         
-    except IndexError:
-        ground_truth_answers = " "
+#     except IndexError:
+#         ground_truth_answers = " "
     
-    vectorizer = TfidfVectorizer()
-    answer_vectors = vectorizer.fit_transform([user_question, ground_truth_answers])
-    similarity = cosine_similarity(answer_vectors[0], answer_vectors[1])[0][0]
-#     print(similarity)
-    if similarity >= 0.5:
-        return answers
-    else:
-        persist_directory = 'gpt_3'
-        embedding = OpenAIEmbeddings()
-        vectordb2 = Chroma(embedding_function=embedding,
-                           persist_directory=persist_directory)
-        retriever = vectordb2.as_retriever(search_kwargs={"k":2})
-        gpt = ChatOpenAI(temperature=0,
-                model_name = "gpt-3.5-turbo")
-        qa_chain2 = RetrievalQA.from_chain_type(llm=gpt,
-                                      chain_type = "stuff",
-                                      retriever = retriever,
-                                      return_source_documents= True)
-        return qa_chain2.run(query_text)['result']
-        # llm_response2 = qa_chain2(query)
-        # return llm_response2['result']
+#     vectorizer = TfidfVectorizer()
+#     answer_vectors = vectorizer.fit_transform([user_question, ground_truth_answers])
+#     similarity = cosine_similarity(answer_vectors[0], answer_vectors[1])[0][0]
+# #     print(similarity)
+#     if similarity >= 0.5:
+#         return answers
+#     else:
+#         persist_directory = 'gpt_3'
+#         embedding = OpenAIEmbeddings()
+#         vectordb2 = Chroma(embedding_function=embedding,
+#                            persist_directory=persist_directory)
+#         retriever = vectordb2.as_retriever(search_kwargs={"k":2})
+#         gpt = ChatOpenAI(temperature=0,
+#                 model_name = "gpt-3.5-turbo")
+#         qa_chain2 = RetrievalQA.from_chain_type(llm=gpt,
+#                                       chain_type = "stuff",
+#                                       retriever = retriever,
+#                                       return_source_documents= True)
+#         return qa_chain2.run(query_text)['result']
+#         # llm_response2 = qa_chain2(query)
+#         # return llm_response2['result']
 
     
 # Page title
