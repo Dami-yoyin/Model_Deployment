@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from langchain.chat_models import ChatOpenAI
 import tempfile
 
-openai_api_key = "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"
+openai_api_key = "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"
 
 def generate_response(uploaded_file, query_text):
     # Load document if file is uploaded
@@ -31,11 +31,11 @@ def generate_response(uploaded_file, query_text):
         # Select embeddings
         embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
         # Create a vectorstore from documents
-        database = FAISS.from_documents(texts, embeddings)
+        database1 = FAISS.from_documents(texts, embeddings)
         # Create retriever interface
-        retrievers = database.as_retriever(search_kwargs={"k":2})
+        retrievers1 = database1.as_retriever(search_kwargs={"k":2})
         # Create QA chain
-        qa_chain = ConversationalRetrievalQA.from_llm(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retrievers, return_source_documents= True)
+        qa_chain = ConversationalRetrievalQA.from_llm(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retrievers1, return_source_documents= True)
         return qa_chain.run(query_text)
         
 # def output():
